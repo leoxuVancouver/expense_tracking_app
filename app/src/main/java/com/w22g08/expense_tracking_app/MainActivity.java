@@ -1,17 +1,25 @@
 package com.w22g08.expense_tracking_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
+import android.widget.SearchView;
 import android.widget.Spinner;
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.Calendar;
 
@@ -21,46 +29,78 @@ public class MainActivity extends AppCompatActivity {
     DatePickerDialog datePickerDialog;
     Calendar calendar;
     int mYear, mMonth, mDay, mHour, mMinute;
+    DrawerLayout dLayout;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        myToolbar.setNavigationIcon(R.drawable.search);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        Spinner mySpinner = findViewById(R.id.spinner_toolbar);
-        ArrayAdapter spinnerAdapter = new ArrayAdapter(this, androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item, inteval);
-        mySpinner.setAdapter(spinnerAdapter);
+
+
+
+        // implement setNavigationOnClickListener event
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+        setNavigationDrawer(); // call method
+
+        SearchView simpleSearchView = (SearchView) findViewById(R.id.simpleSearchView); // inititate a search view
+        CharSequence query = simpleSearchView.getQuery(); // get the query string currently in the text field
 
         calendar=Calendar.getInstance();
         mYear=calendar.get(Calendar.YEAR);
         mMonth=calendar.get(Calendar.MONTH);
         mDay=calendar.get(Calendar.DAY_OF_MONTH);
 
-        datePickerDialog=new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        datePickerDialog=new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 
 
             }
         },mYear,mMonth,mDay);
-
-
-        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    }
+    private void setNavigationDrawer() {
+        dLayout = (DrawerLayout) findViewById(R.id.drawer_layout); // initiate a DrawerLayout
+        NavigationView navView = (NavigationView) findViewById(R.id.navigation);
+        // initiate a Navigation View
+// implement setNavigationItemSelectedListener event on NavigationView
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i==3){
-                    datePickerDialog.show();
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId=item.getItemId();
+                if(itemId==R.id.month){
+                    //
                 }
-            }
+                if(itemId==R.id.year){
+                    //
+                }
+                if(itemId==R.id.day){
+                    datePickerDialog.show();
+                    dLayout.closeDrawers();
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+                return false;
             }
         });
 
-
     }
+
+
+
+
+
+
+
+
 }
+
+
